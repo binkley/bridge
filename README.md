@@ -7,6 +7,11 @@ align="right" width="20%" height="auto"/>
 
 ## Setup
 
+[Install
+Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+for setting up your Python environment.
+
+From your command line:
 ```bash
 conda env create --file environment.yml
 conda activate bridge
