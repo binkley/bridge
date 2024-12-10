@@ -4,3 +4,10 @@ align="right" width="20%" height="auto"/>
 </a>
 
 # Bridge with AI
+
+## Setup
+
+```bash
+conda env create --file environment.yml
+conda activate bridge
+```
