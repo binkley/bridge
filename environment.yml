@@ -5,3 +5,7 @@ channels:
 dependencies:
   - python=3.12
   - trl
+  - peft
+  - pytorch
+  - datasets
+  - transformers

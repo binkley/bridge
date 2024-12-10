@@ -16,3 +16,8 @@ From your command line:
 conda env create --file environment.yml
 conda activate bridge
 ```
+
+When you edit [`environment.yml`](./environment.yml), update with:
+```bash
+conda env update
+```
