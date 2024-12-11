@@ -8,7 +8,7 @@ from trl import SFTTrainer
 def train(path):
     """Return the trained dataset.
 
-    >>> train('data/tatsu-lab/alpacka')
+    >>> train('data/tatsu-lab/alpaca')
     """
     from datasets import load_dataset
     return load_dataset(path, split='train')
