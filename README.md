@@ -17,26 +17,22 @@ The initial data for setup comes from
 
 ## Setup
 
-This project uses Python.
-This is a common choice by experts in AI/LLM/ML work.
-Assuming Python, Conda is a common choice for managing libraries.
+This project uses Python.  You **must** start with setting up your local
+session to work with helper libraries for Bridge:
 
-### Use Conda
-
-[Install
-Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
-for setting up your Python environment.
-
-From your command line:
-```bash
-conda env create --file environment.yml
-conda activate bridge
+```
+# The next step is installing Python 3.13 on a Mac. This does not interfere
+# with your your other projets.
+$ brew install python3.13  # The libraries do not work (yet) with newer Python
+$ python3.13 -m venv .venv  # Lets keep code local and not update your install
+$ .venv/bin/activate  # Turn on your setup specific to the current session
+$ pip install -r requirements.txt  # Add "endplay" and others here only
 ```
 
-When you edit [`environment.yml`](./environment.yml), update with:
-```bash
-conda env update
-```
+## Dealing hands
+
+Use the `[random-hands.py](./random-hands.py)` executable script to create
+random hands.
 
 ## Training
 

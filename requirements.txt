@@ -1,1 +1,4 @@
+# Note that hand download and analysis can take a lown while.
+# The tdqm library provides some progress indication while you wait hours.
 endplay
+tqdm
