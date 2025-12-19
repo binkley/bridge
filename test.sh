@@ -13,4 +13,4 @@ if false; then
     python3 -m coverage run -a --source=. evaluate-hands.py
 fi
 echo "--------------------------------------"
-python3 -m coverage report --fail-under=34
+python3 -m coverage report --fail-under=90
