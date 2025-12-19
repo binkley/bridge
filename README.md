@@ -33,5 +33,10 @@ random hands.
 
 ## Development
 
+- Run the `test.sh` script. It:
+  - Ensures the venv is used.
+  - Builds consolidated coverage across scripts.
+  - Shows a summary report.
+  - Fails if coverage is too low.
 - The `coverage` library is for building and checking test code coverage. It
   is not needed to run the script.
