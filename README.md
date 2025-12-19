@@ -12,9 +12,6 @@ starting from scratch.
 I use the game of [_bridge_](https://en.wikipedia.org/wiki/Contract_bridge) as
 an interesting complex domain model.
 
-The initial data for setup comes from
-[_alpaca_](https://huggingface.co/datasets/tatsu-lab/alpaca/tree/main/data).
-
 ## Setup
 
 This project uses Python.  You **must** start with setting up your local
@@ -34,7 +31,7 @@ $ pip install -r requirements.txt  # Add "endplay" and others here only
 Use the `[random-hands.py](./random-hands.py)` executable script to create
 random hands.
 
-## Training
+## Development
 
-Follow along with [How to Train an LLM with
-PyTorch](https://www.datacamp.com/tutorial/how-to-train-a-llm-with-pytorch).
+- The `coverage` library is for building and checking test code coverage. It
+  is not needed to run the script.

@@ -1,4 +1,6 @@
-# Note that hand download and analysis can take a lown while.
-# The tdqm library provides some progress indication while you wait hours.
+# Only used for testing.
+coverage
+# Note that hand download and analysis can take a long while.
 endplay
+# The tdqm library provides some progress indication while you wait hours.
 tqdm

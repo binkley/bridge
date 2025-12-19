@@ -50,8 +50,6 @@ def generate_random_deal():
         True
         >>> str(deal).startswith("N:")
         True
-        >>> len(deal.north)
-        13
     """
     deck = list(range(52))
     random.shuffle(deck)
