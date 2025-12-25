@@ -31,6 +31,14 @@ $ pip install -r requirements.txt  # Add "endplay" and others here only
 Use the `[generate-hands.py](./generate-hands.py)` executable script to create
 random hands.
 
+## Judging hands
+
+Use `[evaluate-hands.py](./evaluate-hands.py)` in a pipeline from PBN input
+such as:
+```sh
+./generate-hands.py -n 3 | ./evaluate-hands.py  # Just 3-hand demonstration
+```
+
 ## Development
 
 - Run the `test.sh` script. It:
