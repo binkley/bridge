@@ -28,7 +28,7 @@ $ pip install -r requirements.txt  # Add "endplay" and others here only
 
 ## Dealing hands
 
-Use the `[random-hands.py](./random-hands.py)` executable script to create
+Use the `[generate-hands.py](./generate-hands.py)` executable script to create
 random hands.
 
 ## Development
