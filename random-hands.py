@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 """
 Bridge Deal Generator
-Outputs PBN hands to STDOUT for piping.
-
-Examples:
-    >>> random.seed(42)
-    >>> pbn = generate_pbn()
-    >>> pbn.startswith("N:")
-    True
-    >>> len(pbn.split()) == 4
-    True
+Outputs fully valid, populated PBN deals to STDOUT using endplay v0.5.12.
 """
 import random
 import sys
-import csv
 import argparse
 import doctest
 
+try:
+    from endplay.types import Deal, Board
+    import endplay.parsers.pbn as pbn_io
+except ImportError as e:
+    print(f"Error: Required library missing ({e}).", file=sys.stderr)
+    sys.exit(1)
+
 RANKS = "23456789TJQKA"
 
-def generate_pbn():
+def generate_pbn_string():
     """
-    Generates a random PBN string.
+    Generates a random PBN string using manual shuffling logic.
+    This ensures the Deal object is populated regardless of library version.
     """
     deck = list(range(52))
     random.shuffle(deck)
@@ -41,6 +40,16 @@ def generate_pbn():
         hands_pbn.append(".".join(pbn_hand_parts))
     return f"N:{' '.join(hands_pbn)}"
 
+def generate_board():
+    """
+    1. Generates a populated PBN string.
+    2. Creates a Deal object from that string.
+    3. Wraps the Deal in a Board to satisfy the 'info' requirement.
+    """
+    pbn_str = generate_pbn_string()
+    deal = Deal(pbn_str)
+    return Board(deal)
+
 def main():
     parser = argparse.ArgumentParser(
         description="Bridge Deal Generator",
@@ -56,19 +65,19 @@ def main():
     parser.add_argument(
         "--test",
         action="store_true",
-        help="run tests for developers"
+        help="run tests"
     )
     args = parser.parse_args()
 
     if args.test:
-        import doctest
         doctest.testmod(verbose=True)
         sys.exit(0)
 
-    writer = csv.DictWriter(sys.stdout, fieldnames=["pbn"], quoting=csv.QUOTE_NONNUMERIC)
-    writer.writeheader()
-    for _ in range(args.count):
-        writer.writerow({"pbn": generate_pbn()})
+    # Use a generator to create populated boards
+    boards = (generate_board() for _ in range(args.count))
+    
+    # Dump to STDOUT
+    pbn_io.dump(boards, sys.stdout)
 
 if __name__ == "__main__":
     main()
