@@ -40,3 +40,7 @@ random hands.
   - Fails if coverage is too low.
 - The `coverage` library is for building and checking test code coverage. It
   is not needed to run the script.
+
+## References
+
+- [PBN 2.1](https://www.tistis.nl/pbn/pbn_v21.txt)
