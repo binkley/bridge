@@ -2,6 +2,7 @@
 """
 Bridge Deal Evaluator
 Analyzes PBN deals from STDIN and calculates Double Dummy results in parallel.
+Discovered stability limit for DDS C++ backend is ~40 deals per batch.
 """
 
 import sys
@@ -58,34 +59,44 @@ def print_header():
     print(header)
     print("-" * len(header))
 
-def process_boards(boards):
+def process_boards(boards, batch_size=40):
     """
-    Batch solves deals and prints results.
+    Batch solves deals in library-safe increments.
+    Prevents 'Invalid Index' or 'Too many tables' errors in DDS.
 
     Examples:
         >>> process_boards([])
         >>> from endplay.parsers import pbn
         >>> p_str = '[Deal "N:974.AJ3.63.AK963 K83.K9752.7.8752 AQJ5.T864.KJ94.4 T62.Q.AQT852.QJT"]'
-        >>> # The ... handles trailing spaces caused by column formatting
-        >>> process_boards(pbn.loads(p_str))
+        >>> process_boards(pbn.loads(p_str), batch_size=1)
         7      23.0     9...
     """
     if not boards:
         return
 
-    deals = [b.deal for b in boards]
-    # Leverage C++ multithreading for all deals at once
-    tables = calc_all_tables(deals)
+    # Process in safe chunks to respect C++ library limits
+    for i in range(0, len(boards), batch_size):
+        chunk = boards[i : i + batch_size]
+        deals = [b.deal for b in chunk]
 
-    for board, table in zip(boards, tables):
-        stats = get_stats(board.deal, table)
-        result_tag = get_game_result(stats)
-        print(f"{stats['fit']:<6} {stats['hcp']:<8.1f} {stats['tricks']:<8} {result_tag}")
+        # Parallel solve the safe batch
+        tables = calc_all_tables(deals)
+
+        for board, table in zip(chunk, tables):
+            stats = get_stats(board.deal, table)
+            result_tag = get_game_result(stats)
+            print(f"{stats['fit']:<6} {stats['hcp']:<8.1f} {stats['tricks']:<8} {result_tag}")
 
 def main():
     parser = argparse.ArgumentParser(
         description="Evaluate Bridge Deals from STDIN (Parallel)",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=40,
+        help="Number of deals to process per DDS batch to avoid library errors"
     )
     parser.add_argument("--test", action="store_true", help="Run doctests")
     args = parser.parse_args()
@@ -94,7 +105,7 @@ def main():
         from endplay.types import Deal, Board
         # Use ELLIPSIS to ignore the trailing whitespace in column-formatted output
         res = doctest.testmod(
-            verbose=True, 
+            verbose=True,
             optionflags=doctest.ELLIPSIS,
             extraglobs={'Deal': Deal, 'Board': Board, 'Denom': Denom, 'Player': Player}
         )
@@ -105,7 +116,7 @@ def main():
     try:
         # Load all boards from stdin PBN stream
         boards = pbn_io.load(sys.stdin)
-        process_boards(boards)
+        process_boards(boards, batch_size=args.batch_size)
     except Exception as e:
         print(f"Error processing PBN stream: {e}", file=sys.stderr)
         sys.exit(1)
