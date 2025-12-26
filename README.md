@@ -26,6 +26,11 @@ $ .venv/bin/activate  # Turn on your setup specific to the current session
 $ pip install -r requirements.txt  # Add "endplay" and others here only
 ```
 
+### Python version
+
+Because of library dependencies, this project is limited to Python 3.13 and
+cannot use version 3.14 or later (for now).
+
 ## Dealing hands
 
 Use the `[generate-hands.py](./generate-hands.py)` executable script to create
