@@ -23,13 +23,8 @@ import sys
 import argparse
 import doctest
 from datetime import date
-
-try:
-    from endplay.types import Deal, Board
-    import endplay.parsers.pbn as pbn_io
-except ImportError as e:
-    print(f"Error: Required library missing ({e}). Run: pip install endplay", file=sys.stderr)
-    sys.exit(1)
+from endplay.types import Board, Deal, Denom, Player
+import endplay.parsers.pbn as pbn_io
 
 RANKS = "23456789TJQKA"
 
@@ -103,8 +98,14 @@ def main():
     args = parser.parse_args()
 
     if args.test:
-        doctest.testmod(verbose=True)
-        sys.exit(0)
+        # Capture the named tuple (failed, attempted)
+        results = doctest.testmod(verbose=True, extraglobs={
+            'Deal': Deal,
+            'Board': Board,
+            'Denom': Denom,
+            'Player': Player
+        })
+        sys.exit(bool(results.failed))
 
     # Convert generator to list for the pbn_io.dump function
     boards = list(generate_boards(args.count))
