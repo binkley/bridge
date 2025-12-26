@@ -22,7 +22,7 @@ session to work with helper libraries for Bridge:
 # with your your other projets.
 $ brew install python3.13  # The libraries do not work (yet) with newer Python
 $ python3.13 -m venv .venv  # Lets keep code local and not update your install
-$ .venv/bin/activate  # Turn on your setup specific to the current session
+$ source .venv/bin/activate  # Turn on your setup specific to the current session
 $ pip install -r requirements.txt  # Add "endplay" and others here only
 ```
 
