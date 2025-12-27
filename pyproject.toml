@@ -1,0 +1,21 @@
+[project]
+name = "bridge"
+version = "1.1.0"
+description = "High-performance bridge hand analysis pipeline"
+requires-python = ">=3.13"
+dependencies = [
+    "endplay",
+    "coverage",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = ["test.sh", "setup.py"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
