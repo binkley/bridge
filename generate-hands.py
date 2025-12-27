@@ -93,8 +93,18 @@ def main():
         description="Generate Bridge Deals in PBN format",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("-n", "--count", type=int, default=10, metavar="N")
-    parser.add_argument("--test", action="store_true", help="Run doctests")
+    parser.add_argument(
+        "-n", "--count",
+        help="Generate N deals",
+        default=10,
+        metavar="N",
+        type=int,
+    )
+    parser.add_argument(
+        "--test",
+        help="Run internal tests",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.test:

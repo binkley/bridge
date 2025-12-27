@@ -94,11 +94,16 @@ def main():
     )
     parser.add_argument(
         "--batch-size",
-        type=int,
+        help="Process deals N at a time to avoid internal errors",
         default=40,
-        help="Number of deals to process per DDS batch to avoid library errors"
+        metavar='N',
+        type=int,
     )
-    parser.add_argument("--test", action="store_true", help="Run doctests")
+    parser.add_argument(
+        "--test",
+        help="Run internal tests",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.test:
