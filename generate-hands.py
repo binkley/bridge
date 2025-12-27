@@ -89,6 +89,27 @@ def generate_boards(count):
         yield board
 
 def main():
+    """
+    >>> import os
+    >>> old_argv = sys.argv
+    >>> sys.argv = [os.path.basename(__file__), "--help"]
+    >>> exit_code = None  # doctest needs initialization before use
+    >>> try:
+    ...     main()
+    ... except SystemExit as e:
+    ...     exit_code = e.code
+    usage: generate-hands.py [-h] [-n N] [--test]
+    <BLANKLINE>
+    Generate Bridge Deals in PBN format
+    <BLANKLINE>
+    options:
+      -h, --help     show this help message and exit
+      -n, --count N  Generate N deals (default: 10)
+      --test         Run internal tests (default: False)
+    >>> exit_code
+    0
+    >>> sys.args = old_argv
+    """
     parser = argparse.ArgumentParser(
         description="Generate Bridge Deals in PBN format",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
