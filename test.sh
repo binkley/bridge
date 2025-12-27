@@ -2,7 +2,7 @@
 # Exit immediately if any command fails
 set -e
 
-source .venv/bin/activate
+[[ -d .venv ]] || source .venv/bin/activate
 
 python3 -m coverage erase
 python3 -m coverage run -a --source=. generate-hands.py --test
