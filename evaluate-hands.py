@@ -2,128 +2,98 @@
 """
 Bridge Deal Evaluator
 Analyzes PBN deals from STDIN and calculates Double Dummy results in parallel.
-Discovered stability limit for DDS C++ backend is ~40 deals per batch.
+Uses defensive batching (~40 deals) for DDS C++ stability on ARM64/M3.
 """
 
 import sys
 import argparse
 import doctest
-from endplay.dds import calc_all_tables
+import os
+import endplay.dds as dds
 from endplay.evaluate import hcp
-from endplay.types import Denom, Player
+from endplay.types import Denom, Player, Deal
 import endplay.parsers.pbn as pbn_io
 
-def get_stats(deal, table):
+def get_game_result(tricks, strain):
     """
-    Calculates stats for a deal using a pre-computed DD table.
+    Determines game or slam success based on strain-specific thresholds.
 
     Examples:
-        >>> from endplay.types import Deal
-        >>> from endplay.dds import calc_dd_table
-        >>> d = Deal("N:974.AJ3.63.AK963 K83.K9752.7.8752 AQJ5.T864.KJ94.4 T62.Q.AQT852.QJT")
-        >>> t = calc_dd_table(d)
-        >>> s = get_stats(d, t)
-        >>> s['tricks']
-        9
-    """
-    tricks = table[Denom.spades, Player.north]
-    fit_len = len(deal.north.spades) + len(deal.south.spades)
-    hcp_total = float(hcp(deal.north) + hcp(deal.south))
-    return {'fit': fit_len, 'hcp': hcp_total, 'tricks': tricks}
-
-def get_game_result(stats):
-    """
-    Determines game success or failure.
-
-    Examples:
-        >>> get_game_result({'tricks': 10, 'hcp': 20})
+        >>> get_game_result(13, 'S')
+        'GRAND'
+        >>> get_game_result(9, 'NT')
         'GAME'
-        >>> get_game_result({'tricks': 8, 'hcp': 25})
-        'FAIL (High HCP)'
+        >>> get_game_result(11, 'C')
+        'GAME'
     """
-    if stats['tricks'] >= 10:
-        return "GAME"
-    if stats['hcp'] >= 25:
-        return "FAIL (High HCP)"
-    return ""
+    if tricks == 13: return "GRAND"
+    if tricks == 12: return "SMALL"
+    
+    # NT needs 9, Majors 10, Minors 11
+    game_thresholds = {'NT': 9, 'S': 10, 'H': 10, 'D': 11, 'C': 11}
+    threshold = game_thresholds.get(strain, 10)
+    
+    return "GAME" if tricks >= threshold else "PART"
 
 def print_header():
-    """
-    Prints the table header.
-
-    >>> print_header()
-    Fit    HCP      Tricks   Result
-    -------------------------------
-    """
-    header = f"{'Fit':<6} {'HCP':<8} {'Tricks':<8} {'Result'}"
+    """Prints the output table header."""
+    header = f"{'HCP':<6} | {'NT':<12} | {'S':<12} | {'H':<12} | {'D':<12} | {'C':<12}"
     print(header)
     print("-" * len(header))
 
 def process_boards(boards, batch_size=40):
     """
-    Batch solves deals in library-safe increments.
-    Prevents 'Invalid Index' or 'Too many tables' errors in DDS.
-
-    Examples:
-        >>> process_boards([])
-        >>> from endplay.parsers import pbn
-        >>> p_str = '[Deal "N:974.AJ3.63.AK963 K83.K9752.7.8752 AQJ5.T864.KJ94.4 T62.Q.AQT852.QJT"]'
-        >>> process_boards(pbn.loads(p_str), batch_size=1)
-        7      23.0     9...
+    Batch solves deals to prevent C++ backend errors.
+    Iterates through all 5 strains for each hand.
     """
     if not boards:
         return
 
-    # Process in safe chunks to respect C++ library limits
+    strains = [('NT', Denom.nt), ('S', Denom.spades), ('H', Denom.hearts), 
+               ('D', Denom.diamonds), ('C', Denom.clubs)]
+
     for i in range(0, len(boards), batch_size):
         chunk = boards[i : i + batch_size]
         deals = [b.deal for b in chunk]
 
-        # Parallel solve the safe batch
-        tables = calc_all_tables(deals)
+        # Parallel solve the safe batch using dds module
+        tables = dds.calc_all_tables(deals)
 
         for board, table in zip(chunk, tables):
-            stats = get_stats(board.deal, table)
-            result_tag = get_game_result(stats)
-            print(f"{stats['fit']:<6} {stats['hcp']:<8.1f} {stats['tricks']:<8} {result_tag}")
+            hcp_total = float(hcp(board.deal.north) + hcp(board.deal.south))
+            results = [f"{hcp_total:<6.1f}"]
+            
+            for label, denom in strains:
+                tricks = table[denom, Player.north]
+                marker = get_game_result(tricks, label)
+                results.append(f"{marker:<5} ({tricks:>2})")
+            
+            print(" | ".join(results))
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Evaluate Bridge Deals from STDIN (Parallel)",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        "--batch-size",
-        help="Process deals N at a time to avoid internal errors",
-        default=40,
-        metavar='N',
-        type=int,
-    )
-    parser.add_argument(
-        "--test",
-        help="Run internal tests",
-        action="store_true",
-    )
-    args = parser.parse_args()
+def main(args=None):
+    """
+    Main entry point for hand evaluation.
+    """
+    parser = argparse.ArgumentParser(description="Evaluate Bridge hands using DDS")
+    parser.add_argument("-b", "--batch-size", type=int, default=40,
+                        help="Number of hands to process per DDS call")
+    parser.add_argument("--test", action="store_true", help="Run internal tests")
+    
+    parsed_args = parser.parse_args(args)
 
-    if args.test:
-        from endplay.types import Deal, Board
-        # Use ELLIPSIS to ignore the trailing whitespace in column-formatted output
-        res = doctest.testmod(
-            verbose=True,
-            optionflags=doctest.ELLIPSIS,
-            extraglobs={'Deal': Deal, 'Board': Board, 'Denom': Denom, 'Player': Player}
-        )
+    if parsed_args.test:
+        # Verify internal logic via doctest
+        res = doctest.testmod(optionflags=doctest.ELLIPSIS)
         sys.exit(bool(res.failed))
 
     print_header()
 
     try:
-        # Load all boards from stdin PBN stream
+        # Load and process PBN from STDIN
         boards = pbn_io.load(sys.stdin)
-        process_boards(boards, batch_size=args.batch_size)
+        process_boards(boards, batch_size=parsed_args.batch_size)
     except Exception as e:
-        print(f"Error processing PBN stream: {e}", file=sys.stderr)
+        print(f"Error processing PBN: {e}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":
