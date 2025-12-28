@@ -31,12 +31,16 @@ $ pip install -r requirements.txt  # Add "endplay" and others here only
 Because of library dependencies, this project is limited to Python 3.13 and
 cannot use version 3.14 or later (for now).
 
-## Dealing hands
+## Running
+
+Try `[./bridge.sh](./bridge.sh) -h`.
+
+### Dealing hands
 
 Use the `[generate-hands.py](./generate-hands.py)` executable script to create
-random hands.
+random hands, or run `./bridge.sh generate -n 3`.
 
-## Judging hands
+### Judging hands
 
 Use `[evaluate-hands.py](./evaluate-hands.py)` in a pipeline from PBN input
 such as:
