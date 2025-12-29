@@ -109,6 +109,17 @@ def main(args=None):
         ...
         >>> sys.argv = old_argv
     """
+    test_parser = argparse.ArgumentParser(add_help=False)
+    test_parser.add_argument("--test", action="store_true")
+    test_args, remaining = test_parser.parse_known_args(args)
+
+    if test_args.test:
+        # Extraglobs restored to ensure doctests have access to types 
+        res = doctest.testmod(verbose=True, optionflags=doctest.ELLIPSIS, extraglobs={
+            'Deal': Deal, 'Board': Board, 'Denom': Denom, 'Player': Player
+        })
+        sys.exit(bool(res.failed))
+
     parser = argparse.ArgumentParser(
         description="Generate Bridge Deals in PBN format",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -125,14 +136,7 @@ def main(args=None):
         help="Run internal tests"
     )
     
-    parsed_args = parser.parse_args(args)
-
-    if parsed_args.test:
-        # Extraglobs restored to ensure doctests have access to types 
-        res = doctest.testmod(verbose=True, optionflags=doctest.ELLIPSIS, extraglobs={
-            'Deal': Deal, 'Board': Board, 'Denom': Denom, 'Player': Player
-        })
-        sys.exit(bool(res.failed))
+    parsed_args = parser.parse_args(remaining)
 
     # Convert generator to list for pbn_io.dump to ensure valid PBN file structure 
     boards = list(generate_boards(parsed_args.count))
