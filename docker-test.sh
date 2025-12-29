@@ -3,8 +3,6 @@
 
 set -euo pipefail
 
-# TODO: Restore coverage
-
 # Assumes Python 3.13 because of C++ depencencies
 
 python3 -m coverage erase
@@ -15,4 +13,4 @@ echo
 echo ">>> Coverage Report"
 echo "--------------------------------------"
 # This will exit with a non-zero status if coverage is < 90%
-python3 -m coverage report --show-missing --fail-under=73
+python3 -m coverage report --show-missing --fail-under=90

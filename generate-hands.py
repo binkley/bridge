@@ -2,7 +2,7 @@
 """
 Bridge Deal Generator
 Outputs PBN 2.1 compliant deals to STDOUT using endplay v0.5.12.
-Requires an explicit count of deals to generate. 
+Requires an explicit count of deals to generate.
 """
 
 import argparse
@@ -14,13 +14,13 @@ from datetime import date
 from endplay.types import Board, Deal, Denom, Player
 import endplay.parsers.pbn as pbn_io
 
-# Rank constants for manual PBN string generation 
+# Rank constants for manual PBN string generation
 RANKS = "23456789TJQKA"
 
 def generate_pbn_string():
     """
-    Manual shuffle to ensure card data is populated and correctly formatted. 
-    
+    Manual shuffle to ensure card data is populated and correctly formatted.
+
     Examples:
         >>> import random
         >>> random.seed(42)
@@ -48,7 +48,7 @@ def generate_pbn_string():
 
 def generate_boards(count):
     """
-    Generator that yields Board objects with mandatory PBN 2.1 metadata. 
+    Generator that yields Board objects with mandatory PBN 2.1 metadata.
 
     Examples:
         >>> import random
@@ -67,7 +67,7 @@ def generate_boards(count):
         board = Board(deal)
         board.board_num = i + 1
 
-        # Mandatory PBN 2.1 Tags restored 
+        # Mandatory PBN 2.1 Tags restored
         board.info.update({
             "Event": "Simulation",
             "Site": "Local Machine",
@@ -86,7 +86,7 @@ def main(args=None):
         >>> import os, sys
         >>> from io import StringIO
         >>> old_argv = sys.argv
-        
+
         >>> # 1. Test missing argument (Should exit with error)
         >>> sys.argv = [os.path.basename(__file__)]
         >>> try:
@@ -114,7 +114,7 @@ def main(args=None):
     test_args, remaining = test_parser.parse_known_args(args)
 
     if test_args.test:
-        # Extraglobs restored to ensure doctests have access to types 
+        # Extraglobs restored to ensure doctests have access to types
         res = doctest.testmod(verbose=True, optionflags=doctest.ELLIPSIS, extraglobs={
             'Deal': Deal, 'Board': Board, 'Denom': Denom, 'Player': Player
         })
@@ -126,19 +126,19 @@ def main(args=None):
     )
     # Mandatary positional argument [cite: 3]
     parser.add_argument(
-        "count", 
-        type=int, 
+        "count",
+        type=int,
         help="Number of deals to generate"
     )
     parser.add_argument(
-        "--test", 
-        action="store_true", 
+        "--test",
+        action="store_true",
         help="Run internal tests"
     )
-    
+
     parsed_args = parser.parse_args(remaining)
 
-    # Convert generator to list for pbn_io.dump to ensure valid PBN file structure 
+    # Convert generator to list for pbn_io.dump to ensure valid PBN file structure
     boards = list(generate_boards(parsed_args.count))
     pbn_io.dump(boards, sys.stdout)
 
