@@ -11,57 +11,73 @@ align="right" width="10%" height="auto"/>
 [![vulnerabilities](https://snyk.io/test/github/binkley/bridge/badge.svg)](https://snyk.io/test/github/binkley/bridge)
 [![license](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-I am not a data scientist nor an expert in LLM model training nor an expert in
-Python libraries.
-This repo is me applying LLMs to what user experience might be like when
-starting from scratch.
+I am not a data scientist, an expert in LLM model training, nor an expert in
+Python libraries. This repo is an exploration of applying LLMs to a complex
+domain model from scratch.
+
 I use the game of [_bridge_](https://en.wikipedia.org/wiki/Contract_bridge) as
-an interesting complex domain model.
+the domain model.
 
 ## Setup
 
-This project uses Python.  You **must** start with setting up your local
-session to work with helper libraries for Bridge:
+This project requires **Python 3.11** to match the CI environment and ensure
+compatibility with the `endplay` (DDS) library.
 
+```bash
+# Install Python 3.11 (Mac example)
+$ brew install python@3.11
+
+# Set up the local virtual environment
+$python3.11 -m venv .venv$ source .venv/bin/activate
+
+# Install dependencies
+$ pip install -r requirements.txt
 ```
-# The next step is installing Python 3.13 on a Mac. This does not interfere
-# with your your other projets.
-$ brew install python3.13  # The libraries do not work (yet) with newer Python
-$ python3.13 -m venv .venv  # Lets keep code local and not update your install
-$ source .venv/bin/activate  # Turn on your setup specific to the current session
-$ pip install -r requirements.txt  # Add "endplay" and others here only
+
+## Python Version Note
+
+Because of specific C++ library dependencies for the Double Dummy Solver
+(DDS), this project is currently pinned to Python 3.11. Newer versions (3.12+)
+may cause instability or build failures.
+
+## Usage
+
+The primary entry point is the [./bridge.sh](./bridge.sh) orchestrator. Try
+`./bridge.sh --help` for a list of commands.
+
+### 1. Dealing Hands
+
+Use the generate subcommand (or the underlying script) to create PBN hands.
+This requires a mandatory count argument.
+
+```bash
+# Generate 10 hands to STDOUT
+$ ./bridge.sh generate 10
+
+# Or invoke the script directly
+$ ./generate-hands.py 10
 ```
 
-### Python version
+### 2. Judging Hands (Pipeline)
 
-Because of library dependencies, this project is limited to Python 3.13 and
-cannot use version 3.14 or later (for now).
+Use the evaluate-hands.py script to analyze deals. It reads PBN data from
+input and prints out a table.
 
-## Running
-
-Try `[./bridge.sh](./bridge.sh) -h`.
-
-### Dealing hands
-
-Use the `[generate-hands.py](./generate-hands.py)` executable script to create
-random hands, or run `./bridge.sh generate -n 3`.
-
-### Judging hands
-
-Use `[evaluate-hands.py](./evaluate-hands.py)` in a pipeline from PBN input
-such as:
-```sh
-./generate-hands.py -n 3 | ./evaluate-hands.py  # Just 3-hand demonstration
+```bash
+# Generate 3 hands and evaluate them immediately
+$ ./generate-hands.py 3 | ./evaluate-hands.py
 ```
 
 ## Development
 
-- Run the `test.sh` script. It:
-  - Uses a containerized build for Python 3.13 same as CI does.
-  - Builds consolidated coverage across scripts.
-  - Shows a summary report.
-  - Fails if coverage is too low.
+The project uses a containerized workflow to ensure that local development and
+GitHub actions work the same.
+
+- Run Tests: `./bridge.sh test`
+  Runs inside a Docker container (Python 3.11 / Debian Bookworm).
+- Records coverage.
+- Fails if coverage drops below 90%.
 
 ## References
 
-- [PBN 2.1](https://www.tistis.nl/pbn/pbn_v21.txt)
+- [PBN 2.1 Specification](https://www.tistis.nl/pbn/pbn_v21.txt)
