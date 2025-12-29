@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Exit immediately if any command fails
-set -e
+
+set -euo pipefail
 
 # Assumes Python 3.13 because of C++ depencencies
 
