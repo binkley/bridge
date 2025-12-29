@@ -1,9 +1,15 @@
 <a href="./LICENSE.md">
-<img src="./images/public-domain.svg" alt="Public Domain"
-align="right" width="20%" height="auto"/>
+<img src="./images/cc0.svg" alt="Creative Commons Public Domain Dedication"
+align="right" width="10%" height="auto"/>
 </a>
 
 # Bridge with AI
+
+[![build](https://github.com/binkley/bridge/actions/workflows/ci.yml/badge.svg)](https://github.com/binkley/bridge/actions)
+[![pull requests](https://img.shields.io/github/issues-pr/binkley/bridge.svg)](https://github.com/binkley/bridge/pulls)
+[![issues](https://img.shields.io/github/issues/binkley/bridge.svg)](https://github.com/binkley/bridge/issues)
+[![vulnerabilities](https://snyk.io/test/github/binkley/bridge/badge.svg)](https://snyk.io/test/github/binkley/bridge)
+[![license](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
 I am not a data scientist nor an expert in LLM model training nor an expert in
 Python libraries.
