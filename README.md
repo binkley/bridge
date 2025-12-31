@@ -81,3 +81,8 @@ GitHub actions work the same.
 ## References
 
 - [PBN 2.1 Specification](https://www.tistis.nl/pbn/pbn_v21.txt)
+- [Blue Chip Bridge Table Manager Protocol](https://web.archive.org/web/20210514012054/https://www.bluechipbridge.co.uk/protocol.htm) &mdash; this is
+  challenging to track down; the link is to the Wayback Machine, the original
+  having turned into squatter spam.
+  [bcb-table-manager-protocol.md](./bcb-table-manager-protocol.md) is a
+  porting of this link contents to Markdown.
