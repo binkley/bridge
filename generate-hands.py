@@ -107,6 +107,13 @@ def main(args=None):
         positional arguments:
           count       Number of deals to generate
         ...
+
+        >>> # 3. Happy path
+        >>> sys.argv = [os.path.basename(__file__), "1"]
+        >>> main()
+        % PBN 2.1
+        ...
+
         >>> sys.argv = old_argv
     """
     test_parser = argparse.ArgumentParser(add_help=False)

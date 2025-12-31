@@ -63,6 +63,7 @@ def main(args=None):
         >>> import os, sys
         >>> from io import StringIO
         >>> old_argv, old_stdin = sys.argv, sys.stdin
+
         >>> # 1. Test Help
         >>> sys.argv = [os.path.basename(__file__), "--help"]
         >>> try:
@@ -71,6 +72,7 @@ def main(args=None):
         ...     pass
         usage: evaluate-hands.py [-h] [-b N] [--test]
         ...
+
         >>> # 2. Integration Test with PBN 2.1 stream
         >>> pbn_input = (
         ...     '[Event "Simulation"]\\n'
@@ -83,6 +85,7 @@ def main(args=None):
         HCP    | NT           | S            | H            | D            | C
         ---------------------------------------------------------------------------------
         23.0   | GAME  ( 9) | PART  ( 9) | PART  ( 8) | PART  ( 8) | PART  ( 8)
+
         >>> sys.stdin, sys.argv = old_stdin, old_argv
     """
     parser = argparse.ArgumentParser(
@@ -95,7 +98,7 @@ def main(args=None):
 
     parsed_args = parser.parse_args(args)
 
-    if parsed_args.test:  # pragma: no cover
+    if parsed_args.test:
         # Restore verbose=True to see the "Test passed" output
         res = doctest.testmod(verbose=True, optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
         sys.exit(bool(res.failed))
