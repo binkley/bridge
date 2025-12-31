@@ -2,14 +2,19 @@ name: Bridge Pipeline CI
 
 on:
   push:
-    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'     # Matches .md files in any directory recursively
+      - 'images/**'   # Matches everything inside the images folder
   pull_request:
-    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - 'images/**'
+  workflow_dispatch:  # Manual trigger remains unaffected by path filters
 
 jobs:
   validate-pipeline:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
