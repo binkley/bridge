@@ -95,22 +95,14 @@ def main(args=None):
 
     parsed_args = parser.parse_args(args)
 
-    if parsed_args.test:
+    if parsed_args.test:  # pragma: no cover
         # Restore verbose=True to see the "Test passed" output
         res = doctest.testmod(verbose=True, optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
         sys.exit(bool(res.failed))
 
-    # Only print headers and process if we aren't in test mode
     print_header()
-
-    try:
-        boards = pbn_io.load(sys.stdin)
-        process_boards(boards, batch_size=parsed_args.batch_size)
-    except Exception as e:
-        # Avoid crashing on empty stdin during simple runs
-        if "empty" not in str(e).lower():
-            print(f"Error processing PBN: {e}", file=sys.stderr)
-            sys.exit(1)
+    boards = pbn_io.load(sys.stdin)
+    process_boards(boards, batch_size=parsed_args.batch_size)
 
 if __name__ == "__main__":
     main()
