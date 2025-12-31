@@ -38,9 +38,6 @@ def print_header():
 
 def process_boards(boards, batch_size=40):
     """Batch solves deals in library-safe increments."""
-    if not boards:
-        return
-
     strains = [('NT', Denom.nt), ('S', Denom.spades), ('H', Denom.hearts),
                ('D', Denom.diamonds), ('C', Denom.clubs)]
 
